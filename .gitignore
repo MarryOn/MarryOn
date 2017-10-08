@@ -1,0 +1,7 @@
+.idea
+/api/config/
+/.sass-cache/
+/node_modules/
+/api/classes/composer.lock
+/api/classes/vendor/
+/images/
