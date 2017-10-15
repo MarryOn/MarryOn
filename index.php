@@ -6,11 +6,15 @@ use Klein\Request;
 require_once 'api/classes/vendor/autoload.php';
 
 include_once 'api/classes/database/DatabaseManager.php';
+
 include_once 'api/classes/controller/CommentsController.php';
+include_once 'api/classes/controller/AuthController.php';
+
 include_once 'api/classes/service/GalleryService.php';
 
 $dbManager = DatabaseManager::Instance();
 $commentsController = new CommentsController($dbManager);
+$authController = new AuthController($dbManager);
 
 $klein = new Klein();
 
@@ -51,6 +55,22 @@ $klein->respond('POST', '/api/comments/add', $commentsAddCallback);
 $klein->respond('POST', '/api/comments/add/', $commentsAddCallback);
 $klein->respond('OPTIONS', '/api/comments/add/', $nullCallback);
 $klein->respond('OPTIONS', '/api/comments/add', $nullCallback);
+
+/* AUTHENTICATION */
+$commentsAddCallback = function (Request $request) use ($authController) {
+	$body = json_decode($request->body());
+	$username = $body->username;
+	$password = $body->password;
+	header("Access-Control-Allow-Origin: *");
+	header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+	return json_encode($authController->getTokenAction($username, $password));
+};
+$klein->respond('GET', '/api/comments', $commentsCallback);
+
+/* BACKEND */
+$klein->respond('GET', '/backend', function($request, $response, $service) {
+	$service->render('backend/index.php');
+});
 
 /* DEFAULT */
 $klein->respond('GET', '/', function($request, $response, $service) {
