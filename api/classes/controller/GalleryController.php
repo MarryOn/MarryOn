@@ -1,5 +1,10 @@
 <?php
 
+namespace MarryOn\Api\Controller;
+
+use MarryOn\Api\Database\DatabaseManager;
+use MarryOn\Api\Service\GalleryService;
+
 class GalleryController {
 
 	/**
@@ -8,25 +13,19 @@ class GalleryController {
 	protected $dbManager = NULL;
 
 	/**
+	 * @var GalleryService
+	 */
+	protected $galleryService = NULL;
+
+	/**
 	 * CommentsController constructor.
-	 * @param DatabaseManager $dbManager
 	 */
-	public function __construct(DatabaseManager $dbManager) {
-		$this->dbManager = $dbManager;
+	public function __construct() {
+		$this->dbManager = DatabaseManager::Instance();
+		$this->galleryService = new GalleryService();
 	}
 
-
-	/**
-	 * @param string $target
-	 * @return array
-	 */
-	public function listAction($target = ''): array {
-	}
-
-	/**
-	 * @param $comment
-	 * @return array
-	 */
-	public function addAction($comment): array {
+	public function showAction(string $galleryId, string $subGalleryId = NULL) {
+		return $this->galleryService->getData($galleryId, $subGalleryId);
 	}
 }

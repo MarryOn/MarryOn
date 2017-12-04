@@ -1,6 +1,9 @@
 <?php
+namespace MarryOn\Api\Controller;
 
-class CommentsController {
+use MarryOn\Api\Database\DatabaseManager;
+
+class CommentController {
 
 	/**
 	 * @var DatabaseManager
@@ -9,10 +12,9 @@ class CommentsController {
 
 	/**
 	 * CommentsController constructor.
-	 * @param DatabaseManager $dbManager
 	 */
-	public function __construct(DatabaseManager $dbManager) {
-		$this->dbManager = $dbManager;
+	public function __construct() {
+		$this->dbManager = DatabaseManager::Instance();
 	}
 
 
@@ -38,7 +40,7 @@ class CommentsController {
 
 		$resultArray = [];
 		while ($row = $result->fetch_object()) {
-			$createdAt = new DateTime($row->createdAt);
+			$createdAt = new \DateTime($row->createdAt);
 			$row->createdAt = $createdAt->format(DATE_ISO8601);
 			$resultArray[] = $row;
 		}
@@ -70,7 +72,7 @@ class CommentsController {
 			$success = $statement->execute();
 
 			if ($success) {
-				$now = new DateTime();
+				$now = new \DateTime();
 				$comment->createdAt = $now->format(DATE_ISO8601);
 
 				$result['success'] = $success;

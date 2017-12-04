@@ -1,4 +1,7 @@
 <?php
+namespace MarryOn\Api\Service;
+
+use MarryOn\Api\Database\DatabaseManager;
 
 class GalleryService {
 	const SRC_DIR_TYPE_RELATIVE = 0;
@@ -18,27 +21,15 @@ class GalleryService {
 
 	/**
 	 * Gallery constructor.
-	 * @param string          $galleryName
-	 * @param string|null     $sub
-	 * @param DatabaseManager $dbManager
 	 */
-	public function __construct(string $galleryName, string $sub = NULL, DatabaseManager $dbManager) {
+	public function __construct() {
 		$config = include($_SERVER['DOCUMENT_ROOT'] . '/api/config/config.php');
 
 		$this->baseDir = ($_SERVER['REMOTE_ADDR'] === '127.0.0.1' || $_SERVER['REMOTE_ADDR'] === 'localhost') ?
 			$this->dbConfig = $config['local']['baseDir'] :
 			$this->dbConfig = $config['live']['baseDir'];
 
-		$this->dbManager = $dbManager;
-
-		$gallery_dir = 'images' . DIRECTORY_SEPARATOR . $galleryName;
-
-		if($sub !== NULL) {
-			$gallery_dir .= DIRECTORY_SEPARATOR . $sub;
-		}
-
-		$this->src_dir = $gallery_dir . DIRECTORY_SEPARATOR . 'src';
-		$this->dst_dir = $gallery_dir . DIRECTORY_SEPARATOR . 'dst';
+		$this->dbManager = DatabaseManager::Instance();
 	}
 
 	/**
@@ -142,10 +133,21 @@ class GalleryService {
 	}
 
 	/**
+	 * @param string      $galleryName
+	 * @param string|null $sub
 	 * @return array
 	 */
-	public function getData() {
+	public function getData(string $galleryName, string $sub = NULL) {
 		$data = [];
+
+		$gallery_dir = 'images' . DIRECTORY_SEPARATOR . $galleryName;
+
+		if($sub !== NULL) {
+			$gallery_dir .= DIRECTORY_SEPARATOR . $sub;
+		}
+
+		$this->src_dir = $gallery_dir . DIRECTORY_SEPARATOR . 'src';
+		$this->dst_dir = $gallery_dir . DIRECTORY_SEPARATOR . 'dst';
 
 		$this->prepareDistribution();
 
