@@ -35,11 +35,17 @@ $klein->respond('GET', '/backend', function ($request, $response, ServiceProvide
 });
 
 /* DEFAULT */
-$klein->respond(function ($request, $response, ServiceProvider $service, $app, $klein, $matched) {
-	if (count($matched) === 0) {
-		$service->render('main.html');
-	}
-});
+$generalRequestHandler = function (Request $request, $response, ServiceProvider $service, $app, $klein, $matched) {
+	$service->render('main.html');
+};
+$klein->respond('GET', '/[:any]', $generalRequestHandler);
+$klein->respond('GET', '/', $generalRequestHandler);
+
+//$klein->respond(function ($request, $response, ServiceProvider $service, $app, $klein, $matched) {
+//	if (count($matched) === 0) {
+//		$service->render('main.html');
+//	}
+//});
 
 /* ERROR */
 //$klein->onHttpError(function ($code, $router) {
